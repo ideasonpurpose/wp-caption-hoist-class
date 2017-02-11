@@ -1,0 +1,20 @@
+{
+    "name": "ideasonpurpose/CaptionHoistClass",
+    "description": "Hoist WP image classes into their parent caption",
+    "license": "ISC",
+    "keywords": ["wordpress", "caption"],
+    "authors": [
+        {
+            "name": "Joe Maller",
+            "email": "joe@ideasonpurpose.com"
+        }
+    ],
+    "require": {},
+    "require-dev": {
+    },
+    "autoload": {
+        "psr-4": {
+            "ideasonpurpose\\CaptionHoistClass\\": "src"
+        }
+    }
+}
