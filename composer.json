@@ -1,5 +1,5 @@
 {
-    "name": "ideasonpurpose/CaptionHoistClass",
+    "name": "ideasonpurpose/wp-caption-hoist-class",
     "description": "Hoist WP image classes into their parent caption",
     "license": "ISC",
     "keywords": ["wordpress", "caption"],
