@@ -11,7 +11,7 @@ class CaptionHoistClass
 
     public function mce_load($plugins)
     {
-      $plugins['caption-hoist-class'] = plugins_url('caption-hoise-class', __file__);
+      $plugins['caption-hoist-class'] = plugins_url('caption-hoist-class', __file__);
       return $plugins;
     }
 }
