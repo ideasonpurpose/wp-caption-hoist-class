@@ -1,80 +1,77 @@
-/* global tinymce */
-
-(function() {
-  tinymce.create('tinymce.plugins.CaptionHoistClass', {
-    /**
-     * Initializes the plugin, this will be executed after the plugin has been created.
-     * This call is done before the editor instance has finished it's initialization so use the onInit event
-     * of the editor instance to intercept that event.
-     *
-     * @param {tinymce.Editor} ed Editor instance that the plugin is initialized in.
-     * @param {string} url Absolute URL to where the plugin is located.
-     */
-    init: function(ed, url) {
+/* global _, tinymce */
 
 
-      ed.onPostProcess.add(function(ed, o) {
-        console.log(o);
-      });
+var wpImageFilter = function(className) {
+  return className && !className.match(/^wp-image/);
+};
+
+var wpImgSizeFilter = function(className) {
+  return className && !className.match(/^size-/);
+};
 
 
-      // Register the command so that it can be invoked by using tinyMCE.activeEditor.execCommand('mceExample');
-      // ed.addCommand('mceExample', function() {
-      //   ed.windowManager.open({
-      //     file: url + '/dialog.htm',
-      //     width: 320 + ed.getLang('example.delta_width', 0),
-      //     height: 120 + ed.getLang('example.delta_height', 0),
-      //     inline: 1
-      //   }, {
-      //     plugin_url: url, // Plugin absolute URL
-      //     some_custom_arg: 'custom arg' // Custom argument
-      //   });
-      // });
+// TODO: Appears to be unnecessary, but this was a lot of work, so keeping it
+// around for a little bit to be sure it's not needed.
+//
+// var hoistClass = function(content) {
+//   var shortcodeRegex = /(?:<p>)?\[(?:wp_)?caption([^\]]+)\]([\s\S]+?)\[\/(?:wp_)?caption\](?:<\/p>)?/g;
+//   var out = content.replace(shortcodeRegex, function( shortcode, attrs, contents ) {
 
-      // // Register example button
-      // ed.addButton('example', {
-      //   title: 'example.desc',
-      //   cmd: 'mceExample',
-      //   image: url + '/img/example.gif'
-      // });
+//     var imgClasses, newAttrs;
+//     var classRegex = /class=['"]([^'"]*)['"]/;
+//     var img = contents.match(/<img [^>]+>/);
 
-      // // Add a node change handler, selects the button in the UI when a image is selected
-      // ed.onNodeChange.add(function(ed, cm, n) {
-      //   cm.setActive('example', n.nodeName == 'IMG');
-      // });
-    },
+//     if (img) {
+//       imgClasses = img[0].match(classRegex);
+//       imgClasses = (imgClasses) ? imgClasses[1].split(' ') : [];
+//       imgClasses = imgClasses.filter(wpImageFilter);
+//     }
 
-    /**
-     * Creates control instances based in the incomming name. This method is normally not
-     * needed since the addButton method of the tinymce.Editor class is a more easy way of adding buttons
-     * but you sometimes need to create more complex controls like listboxes, split buttons etc then this
-     * method can be used to create those.
-     *
-     * @param {String} n Name of the control to create.
-     * @param {tinymce.ControlManager} cm Control manager to use inorder to create new control.
-     * @return {tinymce.ui.Control} New control instance or null if no control was created.
-     */
-    // createControl: function(n, cm) {
-    //   return null;
-    // },
+//     var captionClasses = attrs.match(classRegex);
 
-    /**
-     * Returns information about the plugin as a name/value array.
-     * The current keys are longname, author, authorurl, infourl and version.
-     *
-     * @return {Object} Name/value array containing information about the plugin.
-     */
-    getInfo: function() {
-      return {
-        longname: 'Caption Hoist Class plugin',
-        author: 'Ideas On Purpose',
-        authorurl: 'http://www.ideasonpurpose.com',
-        infourl: 'https://www.github.com/ideasonpurpose',
-        version: '1.0'
-      };
-    }
-  });
+//     if (captionClasses) {
+//       newAttrs = attrs.replace(classRegex, function(classAttr, classes) {
+//         var captionClasses = classes.split(' ').filter(wpImgSizeFilter);
+//         captionClasses = _.union(captionClasses, imgClasses);
+//         return 'class="' + captionClasses.join(' ') + '"';
+//       });
+//     } else {
+//       newAttrs = newAttrs + ' class="' + imgClasses.join(' ') + '"';
+//     }
 
-  // Register plugin
-  tinymce.PluginManager.add('example', tinymce.plugins.CaptionHoistClass);
-})();
+//     return '[caption ' + newAttrs + ']' + contents + '[/caption]';
+//   });
+//   return out;
+// };
+
+
+
+tinymce.create('tinymce.plugins.captionHoistClass', {
+  init: function(editor, url) {
+
+    editor.on( 'ObjectSelected', function( event ) {
+
+      var imgClasses = tinymce.DOM.getAttrib(event.target, 'class').split(' ').filter(wpImageFilter);
+      // console.log(imgClasses);
+
+      var caption = editor.dom.getParent(event.target, '.wp-caption');
+      var captionClasses = tinymce.DOM.getAttrib(caption, 'class').split(' ').filter(wpImgSizeFilter);
+      // console.log(captionClasses);
+
+      captionClasses = _.union(captionClasses, imgClasses).join(' ');
+      // console.log(captionClasses);
+
+      tinymce.DOM.setAttrib(caption, 'class', captionClasses);
+    });
+
+
+    // editor.on('PostProcess', function(event) {
+    //   if ( event.get ) {
+    //     event.content = hoistClass(event.content);
+    //   }
+    // });
+
+  }
+});
+
+tinymce.PluginManager.add('caption_hoist_class', tinymce.plugins.captionHoistClass);
