@@ -11,9 +11,9 @@ class CaptionHoistClass
 
     public function mce_load($plugins)
     {
-      $package_assets_url = get_stylesheet_directory_uri();
-      $package_assets_url .= str_replace(get_stylesheet_directory(), '', dirname(__dir__));
-      $package_assets_url .= '/assets/js/caption-hoist-class.js';
+        $package_assets_url = get_stylesheet_directory_uri();
+        $package_assets_url .= str_replace(get_stylesheet_directory(), '', dirname(__dir__));
+        $package_assets_url .= '/assets/js/caption-hoist-class.js';
         $plugins['caption_hoist_class'] = $package_assets_url;
         return $plugins;
     }
