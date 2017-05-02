@@ -1,0 +1,1 @@
+# wp-caption-hoist-class
